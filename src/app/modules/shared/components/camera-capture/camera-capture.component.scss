@@ -1,0 +1,17 @@
+.blink {
+    animation: blinker 1s ease-out infinite;
+  }
+  
+  @keyframes blinker {
+    50% {
+      opacity: 0.3;
+    }
+  }
+
+  .face-adjustment {
+    border: solid 4px #408fc1;
+    height: 70%;
+    width: 40%;
+    border-radius: 50%;
+    filter: drop-shadow(0px 0px 5px #71b9e7);
+  }

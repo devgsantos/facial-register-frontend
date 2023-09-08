@@ -1,0 +1,242 @@
+<div *ngIf="!userParams" class="w-100 h-100 top-0 left-0 d-flex position-fixed align-items-center justify-content-center bg-white" style="z-index: 9999;">
+  <div class="d-flex flex-column align-items-center justify-content-center text-center">
+    <div>
+      <img src="../../../assets/img/sem_imagem.png" style="max-height: 200px; width: auto;" alt="Logo">
+    </div>
+   <div class="mt-3 text-bold text-lg mb-5">
+      {{startText}}
+   </div>
+  </div>
+   <!-- <div class="fixed-bottom">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#18aecb" fill-opacity="0.8" d="M0,64L40,80C80,96,160,128,240,154.7C320,181,400,203,480,192C560,181,640,139,720,133.3C800,128,880,160,960,154.7C1040,149,1120,107,1200,106.7C1280,107,1360,149,1400,170.7L1440,192L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path></svg>
+  </div> -->
+</div>
+
+<div>
+    <div class="w-100">
+      <app-header></app-header>
+    </div>
+
+    <div class="container h-100 py-5">
+        <div class="d-flex justify-content-center align-items-center">
+          <form [formGroup]="form" class="pt-2">
+            <div  class="row mb-4 text-center">
+              <h3>Comprador</h3>
+
+            <br/>
+              <!--div class="col-md-6 col-12">
+                <label for="nome" class="form-label">Nome</label>
+                <input formControlName="nome" type="text" class="form-control read-only" id="nome">
+              </div-->
+              <ng-container *ngIf="userParams">
+                <h6>{{this.form.controls['nome'].value}}</h6>
+                <div class="d-flex justify-content-around my-3">
+                  <h6>Total de Ingressos: {{this.userParams.idBilhete.split(',').length}}</h6>
+                  <h6>Ingressos pendentes: {{this.userParams.idBilhete.split(',').length - this.ticketsRecuperados.length}}</h6>  
+                </div>
+                <h6>Data da Visita: {{this.form.controls['dataCheckin'].value | date:  'dd/MM/yyyy'}}</h6>
+              </ng-container>
+              <!--div class="col-md-6 col-12">
+                <label for="tipoIngresso" class="form-label">Tipo Ingresso</label>
+                <input formControlName="tipoIngresso" type="text" class="form-control read-only" id="tipoIngresso">
+              </div-->
+              <!--div class="col-md-6 col-12">
+                <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                <input formControlName="dataNascimento" type="date" class="form-control read-only" id="dataNascimento">
+              </div-->
+              <!--div class="col-md-6 col-12">
+                <label for="dataCheckin" class="form-label">Data Da Visita</label>
+                <input formControlName="dataCheckin" type="date" class="form-control read-only" id="dataCheckin">
+              </div-->
+              <!--div class="col-12 mt-3">
+                <input formControlName="comprovanteResidencia" value="" (change)="saveDocument($event)" class="form-control w-50 m-auto" type="file" id="formFile">
+                <label for="formFile" class="form-label text-right">Anexe um comprovante de residência válido.</label>
+              </div-->
+              <!--div id="foto" class="col-12 d-flex justify-content-center mt-3 mx-auto">
+                <app-camera-capture (photo)="getPhoto($event, 'titular')"></app-camera-capture>
+              </div-->  
+            <br/>
+              <h6 style="color: brown;">É obrigatório o preeenchimento dos dados de todos os visitantes abaixo, exceto os já validados:</h6>
+              <hr class="my-3">                 
+            </div>
+            <div class="w-100 mb-5" formGroupName="utilizadores">
+              <div class="row justify-content-center text-center mb-4" *ngFor="let utilizador of utilizadores.controls; let i = index" [formGroupName]="i">
+                <h5>Dados do Ingresso {{i + 1}}</h5>
+                <div class="m-auto col-12 text-center">
+                  <img id="preview-{{i}}" style="height: 150px; width: auto;" [src]="utilizador.get('foto')?.value ? 'data:image/png;base64,' + utilizador.get('foto')?.value : '../../../assets/img/sem_imagem.png'" [alt]="utilizador.get('idBilhete')?.value">
+                </div>
+                <div class="m-3 col-md-3 col-sm-12">
+                  <label for="nome" class="form-label">Nome <span class="required-sign">*</span></label>
+                  <input formControlName="nome" type="text" class="form-control" id="{{'nome-' + utilizador.get('idBilhete')?.value}}">
+                </div>
+                <div class="m-3 col-md-3 col-sm-12">
+                  <label for="dataNascimento" class="form-label">Data de Nascimento <span class="required-sign">*</span></label>
+                  <input formControlName="dataNascimento" type="date" min="1899-01-01" [max]="dataLimite" class="form-control" id="{{'dataNascimento-' + utilizador.get('idBilhete')?.value}}">
+                  <!-- <small [id]="'dtNasc-' ('idBilhete')?.value" style="color: #000000">CPF é obrigatório acima de 12 anos.</small> -->
+                  <!-- <small [id]="'dtNasc-' ('idBilhete')?.value" style="color: #000000" style="display: none;">CPF é obrigatório acima de 12 anos.</small> -->
+                </div>
+                <div class="m-3 col-md-3 col-sm-12">
+                  <label for="cpf" class="form-label">CPF</label>
+                  <input formControlName="cpf" (blur)="checkPreviousCPF($event)" mask="000.000.000-00" type="text" class="form-control" id="{{'cpf-'  + utilizador.get('idBilhete')?.value}}" [class.ng-invalid]="isCpfRequired(utilizador)">
+                  <small [id]="'alert-'  + utilizador.get('idBilhete')?.value" *ngIf="utilizadores.at(i).get('cpf')?.invalid">Número de CPF inválido.</small>
+                  <small [id]="'alert-' + utilizador.get('idBilhete')?.value" *ngIf="cpfDuplicado === true">Número de CPF utilizado em outro ingresso.</small>
+                  <small [id]="'cpfSmall-' + utilizador.get('idBilhete')?.value" style="color: #000000; display: block" *ngIf="isCpfRequired(utilizador)">CPF é obrigatório acima de 12 anos.</small>
+                </div>
+                <!-- <div class="text-center m-3">
+                  <button [disabled]="form.valid == false" (click)="getTicketToken()" class="btn btn-primary btn-lg" style=" background-color: black;">
+                    Anexar Documento
+                  </button>
+                  <button [disabled]="form.valid == false" (click)="getTicketToken()" class="btn btn-primary btn-lg" style="margin-left: 20px!important; background-color: black;">
+                    Capturar foto
+                  </button>
+                </div> -->
+                <div class="col-12" *ngIf="permissionGranted === false">
+                  <div class="my-2 text-center alert alert-warning" role="alert">
+                    Não temos permissão para acessar sua câmera. Por favor, escolha a opção PERMITIR no seu navegador e tente novamente.<br>
+                    Geralmente esta opção se encontra clicando no ícone&nbsp;&nbsp;<i class="bi bi-camera-video-fill"></i>&nbsp;&nbsp;na barra de endereço do site se você estiver em um computador, ou nas configurações do seu dispositivo se você estiver acessando através de um smartphone ou tablet.
+                  </div>
+                </div>
+                <div class="row" *ngIf="utilizador.value.validado === true" class="col-12 mt-3">
+                  <div class="col-md-6 col-sm-12 m-auto">
+                    <div class="alert alert-success" role="alert">
+                      Este ingresso já está preenchido e validado&nbsp;&nbsp;<i class="bi bi-hand-thumbs-up"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" [id]="'validado-' + utilizador.get('idBilhete')?.value" class="col-12 mt-3" style="display: none;">
+                  <div class="col-md-6 col-sm-12 m-auto">
+                    <div class="alert alert-success" role="alert">
+                      Este ingresso já está preenchido e validado&nbsp;&nbsp;<i class="bi bi-hand-thumbs-up"></i>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="row" *ngIf="this.utilizadores.controls[i].invalid && this.utilizadores.controls[i].touched">
+                  <div class="col-md-6 col-sm-12 m-auto">
+                    <div class="my-2 text-center alert alert-warning" role="alert">
+                      Por favor, verifique se os campos obrigatórios estão preenchidos. Não esqueça da enviar o comprovante de residência e a sua foto.
+                    </div>
+                  </div>
+                </div> -->
+                <div class="row">
+                  <div class="col-md-6 col-sm-12 m-auto">
+                    <div [id]="'error-' + utilizador.get('idBilhete')?.value" *ngIf="utilizador.invalid && utilizador.touched" [ngStyle]="{'display': errosArray.length > 0 ? 'block' : 'none'}" class="my-2 text-center alert alert-warning" role="alert">
+                      <p *ngFor="let nomeCampo of getInvalidCampos(utilizador)">
+                        O campo {{ nomeCampo }} é inválido.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="this.utilizadores.controls[i].value.validado === false" class="col-12 mt-3 d-flex justify-content-center btn-div" [id]="'btnGroup-' + utilizador.get('idBilhete')?.value">
+                  <div class="m-2 filho filho-1">
+                    <div id="btnFile-{{utilizador.get('idBilhete')?.value}}">
+                      <button (click)="inputFile(i)" class="btn btn-dark iniciar" ><i class="bi bi-paperclip"></i>&nbsp;Anexar Comprovante de Endereço</button>
+                      <small style="color:#4b4b4b; margin-left: 10%;" *ngIf="utilizadores.at(i).get('comprovanteResidencia')?.value !== ''">Comprovante carregado.</small>  
+                    </div>
+                    <input style="display: none;" formControlName="comprovanteResidencia" value="" (change)="saveDocument($event, i)" class="" type="file" visbility="hidden" id="comprovante-{{i}}" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff, .pdf">
+                    <label style="display: none;" for="comprovante-{{i}}" class="form-label text-right">Anexe um comprovante de residência válido.</label>
+                   </div>
+                  <div [id]="'foto-' + utilizador.get('idBilhete')?.value" class="m-2 filho filho-2">
+                    <app-camera-capture (photo)="getPhoto($event, 'utilizador', i)" (mediaPermission)="mediaPermission($event)"></app-camera-capture>
+                    <small style="color:#4b4b4b; margin-left: 10%;" *ngIf="utilizadores.at(i).get('fotoFile')?.value !== ''">Foto carregada.</small>
+                  </div>
+                </div>
+                <div *ngIf="this.utilizadores.controls[i].value.validado === false" class="text-center m-3" [id]="'btnEnviar-' + utilizador.get('idBilhete')?.value">
+                  <button (click)="startRequests(this.utilizadores.at(i).get('idBilhete')?.value)" class="btn btn-primary btn-lg">
+                    Enviar este ingresso
+                  </button>
+                </div>
+                 
+
+                <hr class="my-5">
+              </div>
+              <div class="row" *ngIf="this.cpfDuplicadoTodos" class="col-12 mt-3">
+                <div class="col-md-6 col-sm-12 m-auto">
+                  <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-warning"></i>&nbsp;Existem CPFs duplicados. Por favor, utilize um CPF único para cada ingresso.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="warningMessage !== ''" class="my-2 text-center alert alert-warning" role="alert">
+              {{warningMessage}}
+            </div>
+            <!-- <div class="row">
+              <div class="col-md-6 col-sm-12 m-auto">
+                <div id="errorTodos" class="my-2 text-center alert alert-warning" role="alert" style="display: none;">
+                  {{warningMessage}}
+                </div>
+              </div>
+            </div> -->
+            <div class="text-center m-3">
+              <button (click)="startRequests()" class="btn btn-primary btn-lg">
+                Enviar ingressos preenchidos
+              </button>
+            </div>
+          </form>
+        </div>
+        <!-- <button (click)="sendDependentsTicket()">Teste</button> -->
+      </div>
+
+    
+
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div #toastDiv id="liveToast" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex align-items-center justify-content-around">
+            <div class="toast-body">
+              <i class="bi bi-arrow-clockwise"></i>&nbsp;&nbsp;{{descToast}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          </div>
+      </div>
+
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div #toastDivError id="liveToastError" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex align-items-center justify-content-around">
+            <div class="toast-body">
+              <i class="bi bi-arrow-clockwise"></i>&nbsp;&nbsp;{{descToastError}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          </div>
+      </div>
+    <!-- <div class="fixed-bottom">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#18aecb" fill-opacity="0.8" d="M0,64L40,80C80,96,160,128,240,154.7C320,181,400,203,480,192C560,181,640,139,720,133.3C800,128,880,160,960,154.7C1040,149,1120,107,1200,106.7C1280,107,1360,149,1400,170.7L1440,192L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path></svg>
+    </div> -->
+  </div>
+  <app-footer></app-footer>
+
+  <div *ngIf="loading == true" class="w-100 h-100 top-0 left-0 d-flex align-items-center justify-content-center bg-white" style="position: fixed; z-index: 9999;">
+    <div class="d-flex flex-column align-items-center justify-content-center text-center">
+      <div>
+        <img src="../../../assets/img/sem_imagem.png" style="height: 100px; width: auto;" alt="Logo">
+      </div>
+     <div class="mt-3">
+        {{loadingText}}
+     </div>
+     <div class="spinner-grow mt-3" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    </div>
+  </div>
+
+  <div #confirmModal class="modal" tabindex="-1" role="dialog" style="z-index: 99999 !important;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmar envio</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Você preencheu {{utilizadoresTouched.length}} ingressos, mas apenas {{utilizadoresValidos.length}} {{utilizadoresValidos.length === 1 ? 'ingresso parece estar válido' : 'ingressos parecem estar válidos'}} para envio. </p>
+          <p>Deseja enviar mesmo assim e continuar o preenchimento dos outros depois?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" (click)="confirmarEnvioUnico(true)" class="btn btn-outline-primary">Sim, enviar {{utilizadoresValidos.length}} {{utilizadoresValidos.length === 1 ? 'ingresso.' : 'ingressos.'}}</button>
+          <button type="button" (click)="confirmarEnvioUnico(false)" class="btn btn-outline-dark" data-dismiss="modal">Continuar preenchendo</button>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,16 @@
+version: '3.5' # We use version 3.5 syntax
+
+services:  
+  angular-iframe-front:
+    container_name: verificador-facial
+    build: 
+      context: .
+      args:
+        - ENVIRONMENT="production"
+    networks:
+      - local-network
+    ports:
+       - 4200:4200
+
+networks:
+  local-network:

@@ -1,0 +1,13 @@
+.fade-out { 
+    animation: fadeOut 1s; 
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0;  display: none;}
+}
+
+.preview {
+    transform: translateX(-50%);
+    top: 10%;
+}

@@ -1,0 +1,49 @@
+<button (click)="iniciarCamera()" class="btn btn-dark iniciar"><i class="bi bi-camera"></i>&nbsp;Capturar Foto de Rosto</button>
+
+<div #modalCaptura class="modal fade" id="modalCaptura" tabindex="-1" aria-labelledby="modalCaptura" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalCaptura">Captura de foto</h1>
+        </div>
+        <div class="modal-body">
+          <div class="frame">
+            <div class="video-container overflow-hidden d-flex justify-content-center">
+              <video #video [ngStyle]="{'display': image_data_url == '' ? 'block' : 'none'}"
+                    [width]="WIDTH"
+                    [height]="HEIGHT"
+                    controls="false"
+                    autoplay
+                    muted>
+              </video>
+              <div #canvas [ngStyle]="{'display': image_data_url == '' ? 'block' : 'none'}"></div>
+              <div [ngStyle]="{'display': image_data_url == '' ? 'none' : 'block'}" class="preview text-center">
+                <!-- <img #imgPreview [src]="image_data_url" [width]="WIDTH" [height]="320"> -->
+                <div [ngStyle]="{'display': image_data_url == '' ? 'none' : 'flex'}" class="justify-content-center mt-3 position-relative z-3">
+                  <!-- <div [ngStyle]="{'display': image_data_url != '' ? 'block' : 'none'}" class="text-danger">
+                    <a [ngStyle]="{'display': image_data_url != '' ? 'block' : 'none'}" class="mx-2" (click)="repetirFoto()" type="button" class="btn btn-link">Repetir</a>
+                  </div> -->
+                  <div >
+                  </div>
+                </div>
+              </div>  
+              
+            </div>
+           
+            <div [ngStyle]="{'display': image_data_url == '' ? 'flex' : 'none'}" class="justify-content-center mt-3 mb-3 position-relative div-btn">
+              <!-- <button (click)="tirarFoto()" type="button" class="btn btn-primary" style="z-index: 9999;">Tirar Foto</button> -->
+            </div>
+            <div #loader class="loader d-flex justify-content-center align-items-center bg-light h-100 w-100 position-absolute top-0 start-0 text-dark" id="loader" style="z-index: 99;">
+              <div class="d-flex flex-column justify-content-center align-items-center">
+                <div class="spinner-grow text-secondary mb-2" style="width: 3rem; height: 3rem;" role="status"></div>
+                <div class="m-auto text-center">Iniciando captura</div>  
+              </div>
+            </div>
+          </div>
+        <div class="modal-footer">
+          <button (click)="salvarImagem()" type="button" class="btn btn-primary">Salvar Imagem</button>
+          <!-- <button (click)="cancelarFoto()" type="button" class="btn btn-link">Fechar</button> -->
+        </div>
+      </div>
+    </div>
+  </div>

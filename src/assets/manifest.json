@@ -1,0 +1,13 @@
+{
+    "short_name": "Aplication",
+    "name": "Aplication",
+    "start_url": "/",
+    "display": "browser",
+    "theme_color": "#000000",
+    "background_color": "#ffffff",
+    "permissions": {
+        "video-capture": {
+        "description": "Required to capture video using getUserMedia()"
+        }
+    }
+}

@@ -1,0 +1,49 @@
+
+<div class="frame h-100 w-100">
+  <div class="position-absolute top-50 start-50 translate-middle w-100 h-100 text-center pt-4">
+    <div class="face-adjustment blink m-auto"></div>
+  </div>
+  <div class="video-container d-flex justify-content-center">
+    <video #video [ngStyle]="{'display': image_data_url == '' ? 'block' : 'none'}"
+            [width]="WIDTH"
+            [height]="HEIGHT"
+            autoplay
+            muted>
+    </video>
+    <div #canvas [ngStyle]="{'display': image_data_url == '' ? 'block' : 'none'}"></div>
+    <div [ngStyle]="{'display': image_data_url == '' ? 'none' : 'block'}" class="preview text-center position-absolute start-50">
+      <img [src]="image_data_url"  [width]="WIDTH"
+      [height]="360">
+      <div [ngStyle]="{'display': image_data_url == '' ? 'none' : 'flex'}" class="justify-content-center mt-3 position-relative z-3">
+        <div [ngStyle]="{'display': sendStatus == 1 ? 'block' : 'none'}">
+          <div  class="spinner-border text-primary" role="status">
+          </div>&nbsp;Salvando foto...
+        </div>
+        <div [ngStyle]="{'display': sendStatus == 2 ? 'block' : 'none'}">
+          <i class="bi bi-check-circle-fill"></i>&nbsp;Foto salva com sucesso!
+        </div>
+        <div [ngStyle]="{'display': sendStatus == 3 ? 'block' : 'none'}" class="text-danger">
+          <i class="bi bi-x-circle-fill"></i>&nbsp;{{tipoErro}}&nbsp;&nbsp;
+          <a [ngStyle]="{'display': sendStatus == 3 ? 'block' : 'none'}" class="mx-2" (click)="repetirFoto()" type="button" class="btn btn-link">Repetir</a>
+
+        </div>
+        <div >
+        </div>
+      </div>
+    </div>  
+    
+  </div>
+ 
+  <div [ngStyle]="{'display': image_data_url == '' ? 'flex' : 'none'}" class="justify-content-center mt-3 position-relative z-3">
+      <div class="mx-2">
+          <button (click)="tirarFoto()" type="button" class="btn btn-primary">Tirar Foto</button>
+      </div>
+  </div>
+  <div #loader class="loader d-flex justify-content-center align-items-center bg-light h-100 w-100 position-absolute top-0 start-0 text-dark" id="loader" style="z-index: 99;">
+    <div class="d-flex flex-column justify-content-center align-items-center">
+      <div class="spinner-grow text-secondary mb-2" style="width: 3rem; height: 3rem;" role="status"></div>
+      <div class="m-auto text-center">Iniciando captura</div>  
+    </div>
+  </div>
+</div>
+
